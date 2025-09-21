@@ -19,6 +19,7 @@ import chatRoute from "./routes/chat.js";
 import userRoute from "./routes/user.js";
 import { connectDb } from "./utils/features.js";
 import { getSocketMembers } from "./utils/helper.js";
+
 https.globalAgent.options.family = 4;
 
 cloudinary.config({
@@ -30,10 +31,7 @@ cloudinary.config({
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
-    cors: {
-        origin: clientURL,
-        credentials: true
-    }
+    cors: corsOptions
 });
 
 connectDb(mongoURI);
@@ -60,17 +58,18 @@ io.on("connection", async (socket) => {
     const user = socket.user;
 
     const chats = await Chat.find({groupChat:false, members:user._id}).lean();
-
     const friends = Array.from(new Set(chats.flatMap(({members})=>members).map(u=>u.toString())));
     
     socket.on(CONNECT_USERS, (userId)=>{
         usersSocketIds.set(userId, socket.id);
 
         const socketMembers = getSocketMembers(friends);
+        socket.to(socketMembers).emit(CONNECT_USERS, userId);
+    })
 
-        const onlineUsers = friends.filter(f=> usersSocketIds.get(f.toString()));
-
-        io.to(socketMembers).emit(CONNECT_USERS, onlineUsers);
+    socket.on(ONLINE_USERS, (onlineUser)=>{
+        const socketMembers = getSocketMembers(friends);
+        socket.to(socketMembers).emit(ONLINE_USERS, onlineUser);
     })
 
     socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
@@ -115,13 +114,10 @@ io.on("connection", async (socket) => {
     })
 
     socket.on("disconnect", () => {
-        usersSocketIds.delete(user._id.toString());
-        
         const socketMembers = getSocketMembers(friends);
+        socket.to(socketMembers).emit(OFFLINE_USERS, user._id.toString());
 
-        const onlineUsers = friends.filter(f=> usersSocketIds.get(f.toString()));
-
-        socket.to(socketMembers).emit(OFFLINE_USERS, onlineUsers);
+        usersSocketIds.delete(user._id.toString());
     });
 })
 

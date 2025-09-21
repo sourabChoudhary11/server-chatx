@@ -186,14 +186,23 @@ const getChatDetails = TryCatch(async (req, res, next) => {
     const { id } = req.params;
 
     if (req.query.populate === "true") {
-        const chat = await Chat.findById(id).populate("members", "name avatar").lean();
+        const chat = await Chat.findById(id).populate(["members", "creator"], "name avatar").lean();
         if (!chat) return next(new ErrorHandler("Chat Not Found", 404));
 
+        chat.members = chat.members.filter(m=>m._id.toString()!==chat.creator._id.toString());
+
         chat.members = chat.members.map(({ _id, name, avatar }) => ({
-            _id,
-            name,
-            avatar: avatar.url
+                _id,
+                name,
+                avatar: avatar.url
         }));
+
+        chat.creator = {
+            _id:chat.creator._id,
+            name:chat.creator.name,
+            avatar: chat.creator.avatar.url
+        }
+
 
         sendResponse(res, 200, { chat })
     } else {
