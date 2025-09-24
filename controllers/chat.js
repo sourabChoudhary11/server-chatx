@@ -118,6 +118,7 @@ const removeMember = TryCatch(async (req, res, next) => {
         message: `${userThatWillBeRemove.name} has been removed from the group`, 
         chatId
     });
+    emitEvent(req, REFETCH_CHAT,[userId]);
 
     sendResponse(res, 200, { message: "Member Removed Successfully" });
 
