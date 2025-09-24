@@ -93,6 +93,8 @@ const addMembers = TryCatch(async (req, res, next) => {
         chatId
     });
 
+    emitEvent(req, REFETCH_CHAT, members);
+
     sendResponse(res, 200, { message: "Members Added Successfully" });
 })
 
