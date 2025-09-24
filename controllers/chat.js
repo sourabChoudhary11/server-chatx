@@ -88,8 +88,10 @@ const addMembers = TryCatch(async (req, res, next) => {
 
     const allUsersName = uniqueMembers.map(m => m.name).join(",");
 
-    emitEvent(req, ALERT, chat.members, `${allUsersName} has been added to the group`);
-    emitEvent(req, REFETCH_CHAT, chat.members);
+    emitEvent(req, ALERT, chat.members,  {
+        message: `${allUsersName} has been added to the group`,
+        chatId
+    });
 
     sendResponse(res, 200, { message: "Members Added Successfully" });
 })
@@ -108,14 +110,14 @@ const removeMember = TryCatch(async (req, res, next) => {
 
     if (chat.members.length <= 3) return next(new ErrorHandler("Group Must Have At Least 3 Members", 400));
 
-    const allChatMembers = chat.members;
-
     chat.members = chat.members.filter(m => m.toString() !== userId.toString());
 
     await chat.save();
 
-    emitEvent(req, ALERT, chat.members, `${userThatWillBeRemove.name} has been removed from the group`);
-    emitEvent(req, REFETCH_CHAT, allChatMembers);
+    emitEvent(req, ALERT, chat.members, {
+        message: `${userThatWillBeRemove.name} has been removed from the group`, 
+        chatId
+    });
 
     sendResponse(res, 200, { message: "Member Removed Successfully" });
 
