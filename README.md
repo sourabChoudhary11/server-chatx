@@ -30,42 +30,43 @@ Node, Express, MongoDB, Socket.IO, cloudinary
 
 1. Clone this repository
  
-git clone https://github.com/sourabChoudhary11/server-chatx.git
+   git clone https://github.com/sourabChoudhary11/server-chatx.git
 
 
 2. Install dependencies
 
-cd server-chatx
-npm install
+   cd server-chatx
+   
+   npm install
 
 
-3. Setup environment variables
+4. Setup environment variables
 
-Create a .env file with:
+   Create a .env file with:
 
-PORT = 5000
+   PORT = 5000
 
-MONGO_URI = your_mongo_uri
+   MONGO_URI = your_mongo_uri
 
-ADMIN_SECRET_KEY = your_admin_secret_key
+   ADMIN_SECRET_KEY = your_admin_secret_key
 
-CLIENT_URL = your_client_url
+   CLIENT_URL = your_client_url
 
-CLOUDINARY_API_KEY = your_cloudinary_api_key
+   CLOUDINARY_API_KEY = your_cloudinary_api_key
 
-CLOUDINARY_API_SECRET = your_cloudinary_api_secret
+   CLOUDINARY_API_SECRET = your_cloudinary_api_secret
 
-CLOUDINARY_CLOUD_NAME = your_cloudinary_cloud_name
+   CLOUDINARY_CLOUD_NAME = your_cloudinary_cloud_name
 
-JWT_SECRET = your_jwt_secret
+   JWT_SECRET = your_jwt_secret
 
 
 4. Start the server
 
-npm run start
+   npm run start
 
-Your backend server should now be running at:
+   Your backend server should now be running at:
 
-http://localhost:5000
+   http://localhost:5000
 
 
